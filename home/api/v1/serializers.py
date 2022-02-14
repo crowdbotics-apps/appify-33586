@@ -8,9 +8,35 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
-
+from models import App, Plan, Subscription
 
 User = get_user_model()
+
+
+class AppSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = App
+        fields = ('id', 'name', 'description', 'type', 'framework',
+                  'domain_name', 'screenshot', 'ssubscription', 'user')
+
+    def _get_request(self):
+        request = self.context.get('request')
+        if request and not isinstance(request, HttpRequest) and hasattr(request, '_request'):
+            request = request._request
+        return request
+
+    def create(self, validated_data):
+        app = App(
+            name=validated_data.get('name'),
+            description=validated_data.get('description'),
+        )
+        app.save()
+        return app
+
+    def save(self, request=None):
+        """rest_auth passes request so we must override to accept it"""
+        return super().save()
 
 
 class SignupSerializer(serializers.ModelSerializer):

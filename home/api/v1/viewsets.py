@@ -6,7 +6,13 @@ from rest_framework.response import Response
 from home.api.v1.serializers import (
     SignupSerializer,
     UserSerializer,
+    AppSerializer,
 )
+
+
+class AppViewSet(ModelViewSet):
+    serializer_class = AppSerializer
+    http_method_names = ["post"]
 
 
 class SignupViewSet(ModelViewSet):
