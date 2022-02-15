@@ -8,7 +8,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
-from models import App, Plan, Subscription
+from home.models import App, Plan, Subscription
 
 User = get_user_model()
 
@@ -17,8 +17,11 @@ class AppSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = App
-        fields = ('id', 'name', 'description', 'type', 'framework',
-                  'domain_name', 'screenshot', 'ssubscription', 'user')
+        fields = ('id', 'name', 'description', 'type', 'framework', 'domain_name',
+                  'screenshot', 'subscription', 'user', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'screenshot', 'subscription',
+                            'user', 'created_at', 'updated_at')
+        url_field_name = 'screenshot'
 
     def _get_request(self):
         request = self.context.get('request')
@@ -33,6 +36,63 @@ class AppSerializer(serializers.ModelSerializer):
         )
         app.save()
         return app
+
+    def save(self, request=None):
+        """rest_auth passes request so we must override to accept it"""
+        return super().save()
+
+
+class PlanSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Plan
+        fields = ('id', 'name', 'description',
+                  'price', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at')
+
+    def _get_request(self):
+        request = self.context.get('request')
+        if request and not isinstance(request, HttpRequest) and hasattr(request, '_request'):
+            request = request._request
+        return request
+
+    def create(self, validated_data):
+        plan = Plan(
+            name=validated_data.get('name'),
+            description=validated_data.get('description'),
+            price=validated_data.get('price'),
+        )
+        plan.save()
+        return plan
+
+    def save(self, request=None):
+        """rest_auth passes request so we must override to accept it"""
+        return super().save()
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscription
+        fields = ('id', 'user', 'plan', 'app',
+                  'active', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'user', 'created_at', 'updated_at')
+
+    def _get_request(self):
+        request = self.context.get('request')
+        if request and not isinstance(request, HttpRequest) and hasattr(request, '_request'):
+            request = request._request
+        return request
+
+    def create(self, validated_data):
+        subscription = Subscription(
+            plan=validated_data.get('plan'),
+            user=validated_data.get(
+                'user'),
+            app=validated_data.get('app'),
+        )
+        subscription.save()
+        return subscription
 
     def save(self, request=None):
         """rest_auth passes request so we must override to accept it"""

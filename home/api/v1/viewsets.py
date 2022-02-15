@@ -2,17 +2,49 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from home.models import App, Plan, Subscription
+from django.http import JsonResponse
 
 from home.api.v1.serializers import (
     SignupSerializer,
     UserSerializer,
     AppSerializer,
+    PlanSerializer,
+    SubscriptionSerializer,
 )
 
 
 class AppViewSet(ModelViewSet):
     serializer_class = AppSerializer
-    http_method_names = ["post"]
+    http_method_names = ["post", "get", "put", "patch", "delete"]
+
+    def get_queryset(self, request):
+        if request.method == 'GET':
+            queryset = App.objects.all()
+            app_serializer = AppSerializer(queryset, many=True)
+            return JsonResponse(app_serializer.data, safe=False)
+
+
+class PlanViewSet(ModelViewSet):
+    serializer_class = PlanSerializer
+    http_method_names = ["get"]
+
+    def get_queryset(self, request):
+        if request.method == 'GET':
+            queryset = Plan.objects.all()
+            plan_serializer = PlanSerializer(queryset, many=True)
+            return JsonResponse(plan_serializer.data, safe=False)
+
+
+class SubscriptionViewSet(ModelViewSet):
+    serializer_class = SubscriptionSerializer
+    http_method_names = ["post", "get", "put", "patch", "delete"]
+
+    def get_queryset(self, request):
+        if request.method == 'GET':
+            queryset = Subscription.objects.all()
+            sub_serializer = SubscriptionSerializer(queryset, many=True)
+            return JsonResponse(sub_serializer.data, safe=False)
 
 
 class SignupViewSet(ModelViewSet):
