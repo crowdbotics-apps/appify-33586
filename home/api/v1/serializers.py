@@ -76,6 +76,17 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = ('id', 'user', 'plan', 'app',
                   'active', 'created_at', 'updated_at')
+        extra_kwargs = {
+            'plan': {
+                'required': True
+            },
+            'app': {
+                'required': True
+            },
+            'active': {
+                'required': True
+            }
+        }
         read_only_fields = ('id', 'user', 'created_at', 'updated_at')
 
     def _get_request(self):
