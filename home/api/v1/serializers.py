@@ -87,6 +87,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         subscription = Subscription(
             plan=validated_data.get('plan'),
+            active=validated_data.get('active'),
             user=validated_data.get(
                 'user'),
             app=validated_data.get('app'),

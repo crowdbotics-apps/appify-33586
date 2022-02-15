@@ -14,9 +14,9 @@ class App(models.Model):
         "Framework", max_length=50, choices=(('django', 'Django'), ('react_native', 'React Native')))
     domain_name = models.CharField("Domain name", max_length=50)
     screenshot = models.URLField("Screenshot")
-    subscription = models.IntegerField("Subscription")
+    subscription = models.IntegerField("Subscription", null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE,)
+                             on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,12 +33,12 @@ class Plan(models.Model):
 class Subscription(models.Model):
     id = models.BigAutoField("ID", primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE,)
+                             on_delete=models.CASCADE, null=True)
 
     plan = models.ForeignKey(
         Plan, on_delete=models.CASCADE, verbose_name="Plan")
     app = models.ForeignKey(
         App, on_delete=models.CASCADE, verbose_name="App", related_name='+', default=None)
-    active = models.BooleanField("Active")
+    active = models.BooleanField("Active", default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

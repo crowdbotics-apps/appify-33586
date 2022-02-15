@@ -17,34 +17,34 @@ from home.api.v1.serializers import (
 class AppViewSet(ModelViewSet):
     serializer_class = AppSerializer
     http_method_names = ["post", "get", "put", "patch", "delete"]
+    queryset = ''
 
-    def get_queryset(self, request):
-        if request.method == 'GET':
-            queryset = App.objects.all()
-            app_serializer = AppSerializer(queryset, many=True)
-            return JsonResponse(app_serializer.data, safe=False)
+    def get_queryset(self, *args, **kwargs):
+        super(AppViewSet, self).get_queryset(*args, **kwargs)
+        queryset = App.objects.all()
+        return queryset
 
 
 class PlanViewSet(ModelViewSet):
     serializer_class = PlanSerializer
-    http_method_names = ["get"]
+    http_method_names = ["get", "post"]
+    queryset = ''
 
-    def get_queryset(self, request):
-        if request.method == 'GET':
-            queryset = Plan.objects.all()
-            plan_serializer = PlanSerializer(queryset, many=True)
-            return JsonResponse(plan_serializer.data, safe=False)
+    def get_queryset(self, *args, **kwargs):
+        super(PlanViewSet, self).get_queryset(*args, **kwargs)
+        queryset = Plan.objects.all()
+        return queryset
 
 
 class SubscriptionViewSet(ModelViewSet):
     serializer_class = SubscriptionSerializer
     http_method_names = ["post", "get", "put", "patch", "delete"]
+    queryset = ''
 
-    def get_queryset(self, request):
-        if request.method == 'GET':
-            queryset = Subscription.objects.all()
-            sub_serializer = SubscriptionSerializer(queryset, many=True)
-            return JsonResponse(sub_serializer.data, safe=False)
+    def get_queryset(self, *args, **kwargs):
+        super(SubscriptionViewSet, self).get_queryset(*args, **kwargs)
+        queryset = Subscription.objects.all()
+        return queryset
 
 
 class SignupViewSet(ModelViewSet):
